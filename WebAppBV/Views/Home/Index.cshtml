@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center" style="background-color: red;">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+@*@using(Html.BeginForm("ExportFile", "Home", FormMethod.Post, new { enctype = "multipart/form-data"}))
+{
+   <div class="form-group">
+        <div class="col-md-10" style="background-color: yellow;">
+            <h4>Selecione o arquivo de texto para exportar para excel.</h4>
+            <br />
+            <input type="file" name="files" title="Escolher arquivo" multiple/>
+        </div>
+   </div>
+   <div class="form-group">
+       <div class="col-md-10">
+           <button type="submit">Exportar</button>
+       </div>
+   </div>
+}*@
+
+<form enctype="multipart/form-data" method="post">
+    <dl>
+        <dt>
+            <label asp-for="FileUpload.FormFile"></label>
+        </dt>
+        <dd>
+            <input asp-for="FileUpload.FormFile" type="file">
+            <span asp-validation-for="FileUpload.FormFile"></span>
+        </dd>
+    </dl>
+    <input asp-page-handler="Upload" class="btn" type="submit" value="Upload" />
+</form>
