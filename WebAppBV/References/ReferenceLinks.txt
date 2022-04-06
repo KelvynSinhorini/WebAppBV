@@ -1,0 +1,5 @@
+﻿> Upload de arquivos
+https://www.macoratti.net/18/11/aspn_upload1.htm
+
+> Limitar o tipo de arquivo em tag <input/>
+https://pt.stackoverflow.com/questions/289781/input-limitando-tipo-de-arquivo

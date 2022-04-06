@@ -15,12 +15,12 @@ namespace WebAppBV.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IHostingEnvironment _appEnvironment;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public HomeController(ILogger<HomeController> logger, IHostingEnvironment env)
+        public HomeController(ILogger<HomeController> logger, IWebHostEnvironment webHostEnvironment)
         {
             _logger = logger;
-            _appEnvironment = env;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public IActionResult Index()
@@ -28,8 +28,15 @@ namespace WebAppBV.Controllers
             return View();
         }
 
+        public IActionResult ExportFile(IFormFile formFile)
+        {
+
+
+            return RedirectToAction("Index");
+        }
+
         //método para enviar os arquivos usando a interface IFormFile
-        public async Task<IActionResult> ExportFile(List<IFormFile> arquivos)
+        public async Task<IActionResult> EnviarArquivo(List<IFormFile> arquivos)
         {
             long tamanhoArquivos = arquivos.Sum(f => f.Length);
             // caminho completo do arquivo na localização temporária
@@ -62,7 +69,7 @@ namespace WebAppBV.Controllers
                 else
                     nomeArquivo += ".tmp";
                 //< obtém o caminho físico da pasta wwwroot >
-                string caminho_WebRoot = _appEnvironment.WebRootPath;
+                string caminho_WebRoot = _webHostEnvironment.WebRootPath;
                 // monta o caminho onde vamos salvar o arquivo : 
                 // ~\wwwroot\Arquivos\Arquivos_Usuario\Recebidos
                 string caminhoDestinoArquivo = caminho_WebRoot + "\\Arquivos\\" + pasta + "\\";
@@ -80,40 +87,6 @@ namespace WebAppBV.Controllers
              $"com tamanho total de : {tamanhoArquivos} bytes";
             //retorna a viewdata
             return View(ViewData);
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-        public async Task<IActionResult> OnPostUploadAsync(List<IFormFile> files)
-        {
-            long size = files.Sum(f => f.Length);
-
-            foreach (var formFile in files)
-            {
-                if (formFile.Length > 0)
-                {
-                    var filePath = Path.GetTempFileName();
-
-                    using (var stream = System.IO.File.Create(filePath))
-                    {
-                        await formFile.CopyToAsync(stream);
-                    }
-                }
-            }
-
-            // Process uploaded files
-            // Don't rely on or trust the FileName property without validation.
-
-            return Ok(new { count = files.Count, size });
         }
     }
 }
