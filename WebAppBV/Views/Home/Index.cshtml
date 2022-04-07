@@ -1,4 +1,5 @@
-﻿@{
+﻿@model WebAppBV.ViewModels.ImportFileViewModel
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -13,7 +14,8 @@
         <div class="col-md-10" style="background-color: yellow;">
             <h4>Selecione o arquivo de texto para exportar para excel.</h4>
             <br />
-            <input type="file" name="formFile" title="Escolher arquivo" accept="text/plain" />
+            @Html.EditorFor(model => model.FormFile, new {  htmlAttributes = new { @type = "file", accept="text/plain", placeholder="Escolher arquivo", title="Escolher arquivo" }})
+            @Html.ValidationMessageFor(model => model.FormFile, "")
         </div> 
    </div>
    <div class="form-group">

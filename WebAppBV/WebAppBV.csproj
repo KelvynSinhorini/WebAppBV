@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\Arquivos\Arquivos_Usuario\Recebidos\" />
+    <Folder Include="NewFolder\" />
   </ItemGroup>
 
 </Project>

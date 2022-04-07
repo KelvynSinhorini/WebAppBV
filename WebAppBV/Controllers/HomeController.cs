@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using WebAppBV.Models;
+using WebAppBV.ViewModels;
 
 namespace WebAppBV.Controllers
 {
@@ -25,14 +26,39 @@ namespace WebAppBV.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            var importFileViewModel = new ImportFileViewModel();
+
+            return View(importFileViewModel);
         }
 
-        public IActionResult ExportFile(IFormFile formFile)
+        public IActionResult ExportFile(ImportFileViewModel importFileViewModel)
         {
+            if(importFileViewModel.FormFile == null || importFileViewModel.FormFile?.Length == 0)
+            {
+                ModelState.AddModelError("FormFile", "Arquivo inválido.");
+                return View("index", importFileViewModel);
+            }
 
+            SaveImportedFileInServer(importFileViewModel.FormFile);
 
             return RedirectToAction("Index");
+        }
+
+        private void SaveImportedFileInServer(IFormFile formFile)
+        {
+            string webRootPath = _webHostEnvironment.WebRootPath;
+
+            string path = Path.Combine(webRootPath, "App_Data/ImportedFiles");
+
+            if (!(Directory.Exists(path)))
+                Directory.CreateDirectory(path);
+
+            path = Path.Combine(path, $"{new Random().Next(1000, 9999)}_{formFile.FileName}");
+
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                formFile.CopyToAsync(stream);
+            }
         }
 
         //método para enviar os arquivos usando a interface IFormFile
