@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -7,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebAppBV.Data;
 
 namespace WebAppBV
 {
@@ -22,6 +24,8 @@ namespace WebAppBV
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
+            services.AddDbContext<BVContext>(options => 
+                options.UseSqlServer(@"Data Source=DESKTOP-M8TO00G\SQLEXPRESS;Initial Catalog=BV;Integrated Security=True"));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -9,3 +9,6 @@ https://social.msdn.microsoft.com/Forums/pt-BR/b33389b7-b091-4523-b4f7-dc3bdb1b9
 
 > Qual é o equivalente de Server.MapPath no ASP.NET Core?
 https://stackoverflow.com/questions/49398965/what-is-the-equivalent-of-server-mappath-in-asp-net-core
+
+> COMO OBTER A STRING DE CONEXÃO DO BANCO SQL SERVER LOCAL
+https://www.youtube.com/watch?v=R0Eb_IocaIs&t=429s&ab_channel=DEVNETCOREValdirFerreira

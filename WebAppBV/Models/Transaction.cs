@@ -1,34 +1,36 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebAppBV.Models
 {
     public class Transaction
     {
-        //[Required]
-        //[Column("TransactionId")]
-        //public Guid TransactionId { get; set; }
+        [Required]
+        [Column("TransactionId")]
+        public Guid TransactionId { get; set; }
 
-        //[Column("Description")]
+        [Column("Description")]
         public string Description { get; set; }
-        //[Column("Local")]
+        [Column("Local")]
         public string Local { get; set; }
-        //[Column("Value")]
+        [Column("Value")]
         public decimal Value { get; set; }
-        //[Column("Date")]
+        [Column("Date")]
         public DateTime Date { get; set; }
 
         /// <summary>
         /// Numero da parcela
         /// </summary>
-        //[Column("NumberOfParcel")]
+        [Column("NumberOfParcel")]
         public int? NumberOfParcel { get; set; }
 
         /// <summary>
         /// Quantidade de parcelas (Total)
         /// </summary>
-        //[Column("TotalParcel")]
+        [Column("TotalParcel")]
         public int? TotalParcel { get; set; }
-        //[Column("OnlyThisMonth")]
+        [Column("OnlyThisMonth")]
         public bool OnlyThisMonth { get; set; } = false;
     }
 }
