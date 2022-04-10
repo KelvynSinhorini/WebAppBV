@@ -1,17 +1,12 @@
 ﻿@model WebAppBV.ViewModels.ImportFileViewModel
 @{
-    ViewData["Title"] = "Home Page";
+    ViewBag.Title = "Exportar Arquivo";
 }
-
-<div class="text-center" style="background-color: red;">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
 
 @using(Html.BeginForm("ExportFile", "Home", FormMethod.Post, new { enctype = "multipart/form-data"}))
 {
    <div class="form-group">
-        <div class="col-md-10" style="background-color: yellow;">
+        <div class="col-md-12" >
             <h4>Selecione o arquivo de texto para exportar para excel.</h4>
             <br />
             @Html.EditorFor(model => model.FormFile, new {  htmlAttributes = new { @type = "file", accept="text/plain", placeholder="Escolher arquivo", title="Escolher arquivo" }})
@@ -20,7 +15,9 @@
    </div>
    <div class="form-group">
        <div class="col-md-10">
-           <button type="submit">Exportar</button>
+           <button class="btn btn-primary" type="submit">Exportar</button>
        </div>
    </div>
 }
+
+@*TODO: Incluir Jquery*@
