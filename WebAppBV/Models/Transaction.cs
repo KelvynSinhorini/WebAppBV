@@ -6,6 +6,19 @@ namespace WebAppBV.Models
 {
     public class Transaction
     {
+        public Transaction() { }
+
+        public Transaction(Guid transactionId, string description, string local, decimal value, DateTime date, int numberOfParcel, int totalParcel)
+        {
+            TransactionId = transactionId;
+            Description = description;
+            Local = local;
+            Value = value;
+            Date = date;
+            NumberOfParcel = numberOfParcel;
+            TotalParcel = totalParcel;
+        }
+
         [Required]
         [Column("TransactionId")]
         public Guid TransactionId { get; set; }
