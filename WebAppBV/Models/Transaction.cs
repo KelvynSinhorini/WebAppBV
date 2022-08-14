@@ -4,6 +4,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebAppBV.Models
 {
+    public enum Owner
+    {
+        Kelvyn,
+        Mano,
+        Jocelaine,
+        Ketlyn,
+        Elias,
+        Joslei
+    }
+
     public class Transaction
     {
         public Transaction() { }
@@ -45,5 +55,7 @@ namespace WebAppBV.Models
         public int? TotalParcel { get; set; }
         [Column("OnlyThisMonth")]
         public bool OnlyThisMonth { get; set; } = false;
+        [Column("Owner")]
+        public Owner? Owner { get; set; }
     }
 }

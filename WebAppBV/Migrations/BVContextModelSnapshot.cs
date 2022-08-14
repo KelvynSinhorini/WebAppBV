@@ -49,6 +49,10 @@ namespace WebAppBV.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("OnlyThisMonth");
 
+                    b.Property<int?>("Owner")
+                        .HasColumnType("int")
+                        .HasColumnName("Owner");
+
                     b.Property<int?>("TotalParcel")
                         .HasColumnType("int")
                         .HasColumnName("TotalParcel");

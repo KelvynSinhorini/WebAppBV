@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using WebAppBV.Models;
+using WebAppBV.Services;
 using WebAppBV.ViewModels;
 
 namespace WebAppBV.Controllers
@@ -19,11 +20,15 @@ namespace WebAppBV.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly ITransactionService _transactionService;
 
-        public HomeController(ILogger<HomeController> logger, IWebHostEnvironment webHostEnvironment)
+        public HomeController(ILogger<HomeController> logger, 
+            IWebHostEnvironment webHostEnvironment,
+            ITransactionService transactionService)
         {
             _logger = logger;
             _webHostEnvironment = webHostEnvironment;
+            _transactionService = transactionService;
         }
 
         public IActionResult Index()
@@ -41,12 +46,15 @@ namespace WebAppBV.Controllers
                 return View("index", importFileViewModel);
             }
 
-            SaveImportedFileInServer(importFileViewModel.FormFile);
+            // SaveImportedFileInServer(importFileViewModel.FormFile);
 
-            string htmlText = GetHtmlTextFromFromFile(importFileViewModel.FormFile);
+            string htmlText = GetHtmlTextFromFile(importFileViewModel.FormFile);
             CleanHtmlText(htmlText);
 
             var transactions = ReadTransactionsInHtmlText(htmlText);
+            // var transancationInDatabase = _transactionService.CheckExistenceAndReturnList(transactions);
+            // Verificar as que existem e retorna-las
+            // Adicionar as que nao existem
 
             // Export to download
             string webRootPath = _webHostEnvironment.WebRootPath;
@@ -77,14 +85,18 @@ namespace WebAppBV.Controllers
 
                     //TODO Retirar depois
                     // -----------------------------------------------------------------------------------------------------------------
-                    transactions.Add(new Transaction(Guid.NewGuid(), "Ponto Frio", "Campo Bom", new decimal(56.66), new DateTime(2021, 8, 29), 8, 12));
-                    transactions.Add(new Transaction(Guid.NewGuid(), "Kabum", "LIMEIRA", new decimal(93.61), new DateTime(2022, 4, 9), 1, 12));
+                    transactions.Add(new Transaction(Guid.NewGuid(), "Ponto Frio", "Campo Bom", new decimal(56.66), new DateTime(2021, 8, 29), 9, 12));
+                    transactions.Add(new Transaction(Guid.NewGuid(), "Kabum", "LIMEIRA", new decimal(93.52), new DateTime(2022, 4, 9), 2, 12));
+                    //transactions.Add(new Transaction(Guid.NewGuid(), "Mercpag Miglaruniform", "OSASCO", new decimal(26.32), new DateTime(2022, 6, 8), 2, 5));
+                    //transactions.Add(new Transaction(Guid.NewGuid(), "Mercpag Miglaruniform", "OSASCO", -131,60, new DateTime(2022, 6, 8), 0, 0));
                     // -----------------------------------------------------------------------------------------------------------------
 
                     int rowCount = 1;
                     int indexFirstRow = 1;
 
-                    foreach (var transaction in transactions?.OrderBy(t => t.Date))
+                    var transactionsOrdenedByDate = transactions?.OrderBy(t => t.Date);
+
+                    foreach (var transaction in transactionsOrdenedByDate)
                     {
                         var row = transactionSheet.CreateRow(rowCount);
 
@@ -119,9 +131,11 @@ namespace WebAppBV.Controllers
                         valueCell.CellStyle = cellStyle;
                         valueCell.SetCellValue(decimal.ToDouble(transaction.Value));
 
-                        if (rowCount == ((transactions.Count - 1) + indexFirstRow))
+                        var lastTransaction = transactionsOrdenedByDate.LastOrDefault();
+
+                        if(transaction.TransactionId == lastTransaction?.TransactionId)
                         {
-                            row = transactionSheet.CreateRow(rowCount);
+                            row = transactionSheet.CreateRow(rowCount + 1);
 
                             var totalCell = row.CreateCell(2);
                             string formula = $"SUBTOTAL(9, C{indexFirstRow + 1}:C{transactions.Count})";
@@ -149,7 +163,7 @@ namespace WebAppBV.Controllers
                 htmlText = htmlText.Replace("<!---->", "");
         }
 
-        private string GetHtmlTextFromFromFile(IFormFile formFile)
+        private string GetHtmlTextFromFile(IFormFile formFile)
         {
             using (var reader = new StreamReader(formFile.OpenReadStream()))
             {
@@ -201,6 +215,7 @@ namespace WebAppBV.Controllers
                     foreach (var elementUl in listUl)
                     {
                         var transaction = GetTransactionInHtmlList(elementUl);
+                        transaction.TransactionId = Guid.NewGuid();
 
                         transactions.Add(transaction);
                     }
