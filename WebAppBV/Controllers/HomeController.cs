@@ -52,7 +52,13 @@ namespace WebAppBV.Controllers
             CleanHtmlText(htmlText);
 
             var transactions = ReadTransactionsInHtmlText(htmlText);
-            // var transancationInDatabase = _transactionService.CheckExistenceAndReturnList(transactions);
+            var existingTransactions = _transactionService.GetExistingByTransactions(transactions);
+            var existingTransactionIds = existingTransactions.Select(t => t.TransactionId);
+
+            var transactionsToAdd = transactions.ExceptBy(existingTransactionIds, t => t.TransactionId);
+
+            _transactionService.Create(transactionsToAdd);
+
             // Verificar as que existem e retorna-las
             // Adicionar as que nao existem
 
@@ -215,7 +221,6 @@ namespace WebAppBV.Controllers
                     foreach (var elementUl in listUl)
                     {
                         var transaction = GetTransactionInHtmlList(elementUl);
-                        transaction.TransactionId = Guid.NewGuid();
 
                         transactions.Add(transaction);
                     }
@@ -235,7 +240,7 @@ namespace WebAppBV.Controllers
 
         private static Transaction GetTransactionInHtmlList(HtmlNode elementUl)
         {
-            var transaction = new Transaction();
+            var transaction = new Transaction(Guid.NewGuid());
 
             var mainDiv = elementUl.ChildNodes.FirstOrDefault(c => c.Name != "#comment");
 

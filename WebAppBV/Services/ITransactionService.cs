@@ -6,7 +6,9 @@ namespace WebAppBV.Services
 {
     public interface ITransactionService
     {
-        List<Transaction> CheckExistenceAndReturnList(List<Transaction> transactions);
+        Task<List<Transaction>> CheckExistenceAndReturnList(List<Transaction> transactions);
         Task Create(Transaction transaction);
+        Task Create(IEnumerable<Transaction> transactions);
+        List<Transaction> GetExistingByTransactions(List<Transaction> transactions);
     }
 }

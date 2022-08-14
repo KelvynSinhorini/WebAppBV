@@ -22,7 +22,8 @@ namespace WebAppBV.Controllers
         // GET: Transaction
         public async Task<IActionResult> Index()
         {
-              return View(await _context.Transactions.ToListAsync());
+            var transactions = await _context.Transactions.ToListAsync();
+            return View(transactions.OrderBy(t => t.Value));
         }
 
         // GET: Transaction/Details/5
@@ -58,7 +59,8 @@ namespace WebAppBV.Controllers
         {
             if (ModelState.IsValid)
             {
-                transaction.TransactionId = Guid.NewGuid();
+                // TODO Verificar se o id esta sendo criado quando vem como parametro
+                // transaction.TransactionId = Guid.NewGuid();
                 _context.Add(transaction);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -89,31 +91,60 @@ namespace WebAppBV.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("TransactionId,Description,Local,Value,Date,NumberOfParcel,TotalParcel,OnlyThisMonth,Owner")] Transaction transaction)
         {
-            if (id != transaction.TransactionId)
+            Transaction transactionToEdit = null;
+
+            if(transaction.TransactionId == Guid.Empty)
             {
-                return NotFound();
+                transactionToEdit = await _context.Transactions.FindAsync(id);
+
+                if(transactionToEdit != null)
+                {
+                    transactionToEdit.Owner = transaction.Owner;
+                    try
+                    {
+                        _context.Update(transactionToEdit);
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!TransactionExists(transaction.TransactionId))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                    return RedirectToAction(nameof(Index));
+                }
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(transaction);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TransactionExists(transaction.TransactionId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
+            //if (id != transaction.TransactionId)
+            //{
+            //    return NotFound();
+            //}
+
+            //if (ModelState.IsValid)
+            //{
+            //    try
+            //    {
+            //        _context.Update(transaction);
+            //        await _context.SaveChangesAsync();
+            //    }
+            //    catch (DbUpdateConcurrencyException)
+            //    {
+            //        if (!TransactionExists(transaction.TransactionId))
+            //        {
+            //            return NotFound();
+            //        }
+            //        else
+            //        {
+            //            throw;
+            //        }
+            //    }
+            //    return RedirectToAction(nameof(Index));
+            //}
             return View(transaction);
         }
 

@@ -58,7 +58,7 @@ namespace WebAppBV.Controllers
         {
             if (ModelState.IsValid)
             {
-                transaction.TransactionId = Guid.NewGuid();
+                //transaction.TransactionId = Guid.NewGuid();
                 _context.Add(transaction);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

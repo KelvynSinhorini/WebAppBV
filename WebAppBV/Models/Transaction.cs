@@ -18,6 +18,11 @@ namespace WebAppBV.Models
     {
         public Transaction() { }
 
+        public Transaction(Guid transactionId)
+        {
+            TransactionId = transactionId;
+        }
+
         public Transaction(Guid transactionId, string description, string local, decimal value, DateTime date, int numberOfParcel, int totalParcel)
         {
             TransactionId = transactionId;
@@ -31,7 +36,7 @@ namespace WebAppBV.Models
 
         [Required]
         [Column("TransactionId")]
-        public Guid TransactionId { get; set; }
+        public Guid TransactionId { get; private set; }
 
         [Column("Description")]
         public string Description { get; set; }

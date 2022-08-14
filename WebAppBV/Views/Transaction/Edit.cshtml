@@ -12,7 +12,8 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="TransactionId" />
+            @*<input type="hidden" asp-for="TransactionId" />*@
+            @Html.HiddenFor(model => model.TransactionId)
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
                 <input asp-for="Description" class="form-control" />
@@ -25,8 +26,8 @@
             </div>
             <div class="form-group">
                 <label asp-for="Value" class="control-label"></label>
-                <input asp-for="Value" class="form-control" />
-                <span asp-validation-for="Value" class="text-danger"></span>
+                <input asp-for="Value" class="form-control" readonly="readonly"/>
+                @*<span asp-validation-for="Value" class="text-danger"></span>*@
             </div>
             <div class="form-group">
                 <label asp-for="Date" class="control-label"></label>
@@ -48,13 +49,23 @@
                     <input class="form-check-input" asp-for="OnlyThisMonth" /> @Html.DisplayNameFor(model => model.OnlyThisMonth)
                 </label>
             </div>
-            <div class="form-group">
+            @*<div class="form-group">
                 <label asp-for="Owner" class="control-label"></label>
                 <input asp-for="Owner" class="form-control" />
                 <span asp-validation-for="Owner" class="text-danger"></span>
+            </div>*@
+            <div class="form-group">
+                <label asp-for="Owner" class="control-label"></label>
+                <select name="Owner">
+                    @foreach (var item in Html.GetEnumSelectList<Owner>())
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
+                <span asp-validation-for="Owner" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Salvar" class="btn btn-primary" />
             </div>
         </form>
     </div>
@@ -65,5 +76,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        // await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
