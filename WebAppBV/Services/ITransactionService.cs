@@ -13,7 +13,6 @@ namespace WebAppBV.Services
         Task Create(IEnumerable<Transaction> transactions);
         Task Edit(Transaction transaction);
         Task Delete(Transaction transaction);
-        Task<List<Transaction>> CheckExistenceAndReturnList(List<Transaction> transactions);
         List<Transaction> GetExistingByTransactions(List<Transaction> transactions);
     }
 }
