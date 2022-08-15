@@ -11,7 +11,9 @@ namespace WebAppBV.Models
         Jocelaine,
         Ketlyn,
         Elias,
-        Joslei
+        Joslei,
+        Compartilhado,
+        Desconto
     }
 
     public class Transaction

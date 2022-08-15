@@ -22,8 +22,10 @@ namespace WebAppBV.Controllers
         // GET: Transaction
         public async Task<IActionResult> Index()
         {
+            // TODO Tirar a ordenação e colocar filtros na tela
+
             var transactions = await _context.Transactions.ToListAsync();
-            return View(transactions.OrderBy(t => t.Value));
+            return View(transactions.OrderBy(t => t.Owner).ThenBy(t => t.Value));
         }
 
         // GET: Transaction/Details/5
