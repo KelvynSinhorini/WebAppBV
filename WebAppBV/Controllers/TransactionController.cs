@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using WebAppBV.Data;
 using WebAppBV.Helpers;
 using WebAppBV.Models;
+using WebAppBV.ViewModels;
 
 namespace WebAppBV.Controllers
 {
@@ -49,7 +50,8 @@ namespace WebAppBV.Controllers
                 return NotFound();
             }
 
-            return View(transaction);
+            var transactionViewModel = Converters.ConvertTransactionToViewModel(transaction);
+            return View(transactionViewModel);
         }
 
         // GET: Transaction/Create
@@ -63,17 +65,17 @@ namespace WebAppBV.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TransactionId,Description,Local,Value,Date,NumberOfParcel,TotalParcel,OnlyThisMonth,Owner")] Transaction transaction)
+        public async Task<IActionResult> Create(TransactionViewModel transactionViewModel)
         {
             if (ModelState.IsValid)
             {
-                // TODO Verificar se o id esta sendo criado quando vem como parametro
-                // transaction.TransactionId = Guid.NewGuid();
+                var transaction = Converters.ConvertTransactionViewModelToModel(transactionViewModel);
+                transaction.SetNewTransactionId();
                 _context.Add(transaction);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(transaction);
+            return View(transactionViewModel);
         }
 
         // GET: Transaction/Edit/5
@@ -89,7 +91,8 @@ namespace WebAppBV.Controllers
             {
                 return NotFound();
             }
-            return View(transaction);
+            var transactionViewModel = Converters.ConvertTransactionToViewModel(transaction);
+            return View(transactionViewModel);
         }
 
         // POST: Transaction/Edit/5
@@ -97,63 +100,37 @@ namespace WebAppBV.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("TransactionId,Description,Local,Value,Date,NumberOfParcel,TotalParcel,OnlyThisMonth,Owner")] Transaction transaction)
+        public async Task<IActionResult> Edit(Guid id, TransactionViewModel transactionViewModel)
         {
-            Transaction transactionToEdit = null;
-
-            if(transaction.TransactionId == Guid.Empty)
+            if (id != transactionViewModel.TransactionId)
             {
-                transactionToEdit = await _context.Transactions.FindAsync(id);
-
-                if(transactionToEdit != null)
-                {
-                    transactionToEdit.Owner = transaction.Owner;
-                    try
-                    {
-                        _context.Update(transactionToEdit);
-                        await _context.SaveChangesAsync();
-                    }
-                    catch (DbUpdateConcurrencyException)
-                    {
-                        if (!TransactionExists(transaction.TransactionId))
-                        {
-                            return NotFound();
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
-                    return RedirectToAction(nameof(Index));
-                }
+                return NotFound();
             }
 
-            //if (id != transaction.TransactionId)
-            //{
-            //    return NotFound();
-            //}
+            if (ModelState.IsValid)
+            {
+                var transaction = Converters.ConvertTransactionViewModelToModel(transactionViewModel);
 
-            //if (ModelState.IsValid)
-            //{
-            //    try
-            //    {
-            //        _context.Update(transaction);
-            //        await _context.SaveChangesAsync();
-            //    }
-            //    catch (DbUpdateConcurrencyException)
-            //    {
-            //        if (!TransactionExists(transaction.TransactionId))
-            //        {
-            //            return NotFound();
-            //        }
-            //        else
-            //        {
-            //            throw;
-            //        }
-            //    }
-            //    return RedirectToAction(nameof(Index));
-            //}
-            return View(transaction);
+                try
+                {
+                    _context.Update(transaction);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!TransactionExists(transaction.TransactionId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(transactionViewModel);
         }
 
         // GET: Transaction/Delete/5
@@ -171,7 +148,8 @@ namespace WebAppBV.Controllers
                 return NotFound();
             }
 
-            return View(transaction);
+            var transactionViewModel = Converters.ConvertTransactionToViewModel(transaction);
+            return View(transactionViewModel);
         }
 
         // POST: Transaction/Delete/5

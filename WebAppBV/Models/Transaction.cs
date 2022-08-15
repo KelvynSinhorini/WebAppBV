@@ -66,5 +66,10 @@ namespace WebAppBV.Models
         public bool OnlyThisMonth { get; set; } = false;
         [Column("Owner")]
         public Owner? Owner { get; set; }
+
+        public void SetNewTransactionId()
+        {
+            TransactionId = Guid.NewGuid();
+        }
     }
 }

@@ -6,6 +6,11 @@ namespace WebAppBV.ViewModels
 {
     public class TransactionViewModel
     {
+        public TransactionViewModel()
+        {
+
+        }
+
         public TransactionViewModel(Guid transactionId, string description, string local, decimal value, DateTime date, int? numberOfParcel, int? totalParcel, bool onlyThisMonth, Owner? owner)
         {
             TransactionId = transactionId;
@@ -20,7 +25,7 @@ namespace WebAppBV.ViewModels
         }
 
         [DisplayName("Id")]
-        public Guid TransactionId { get; private set; }
+        public Guid TransactionId { get; set; }
 
         [DisplayName("Descrição")]
         public string Description { get; set; }
