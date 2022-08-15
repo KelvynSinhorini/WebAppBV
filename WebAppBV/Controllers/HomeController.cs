@@ -89,14 +89,6 @@ namespace WebAppBV.Controllers
                 {
                     var transactionSheet = xssfWorkbook.GetSheet("TRANSAÇÕES");
 
-                    //TODO Retirar depois
-                    // -----------------------------------------------------------------------------------------------------------------
-                    transactions.Add(new Transaction(Guid.NewGuid(), "Ponto Frio", "Campo Bom", new decimal(56.66), new DateTime(2021, 8, 29), 9, 12, false, null));
-                    transactions.Add(new Transaction(Guid.NewGuid(), "Kabum", "LIMEIRA", new decimal(93.52), new DateTime(2022, 4, 9), 2, 12, false, null));
-                    //transactions.Add(new Transaction(Guid.NewGuid(), "Mercpag Miglaruniform", "OSASCO", new decimal(26.32), new DateTime(2022, 6, 8), 2, 5));
-                    //transactions.Add(new Transaction(Guid.NewGuid(), "Mercpag Miglaruniform", "OSASCO", -131,60, new DateTime(2022, 6, 8), 0, 0));
-                    // -----------------------------------------------------------------------------------------------------------------
-
                     int rowCount = 1;
                     int indexFirstRow = 1;
 
