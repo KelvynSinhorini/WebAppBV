@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using WebAppBV.Data;
+using WebAppBV.Helpers;
 using WebAppBV.Models;
 
 namespace WebAppBV.Controllers
@@ -25,7 +24,14 @@ namespace WebAppBV.Controllers
             // TODO Tirar a ordenação e colocar filtros na tela
 
             var transactions = await _context.Transactions.ToListAsync();
-            return View(transactions.OrderBy(t => t.Owner).ThenBy(t => t.Value));
+
+            var transactionsViewModel = transactions.Select(t =>
+            {
+                var transactionViewModel = Converters.ConvertTransactionToViewModel(t);
+                return transactionViewModel;
+            });
+
+            return View(transactionsViewModel.OrderBy(t => t.Owner).ThenBy(t => t.Value));
         }
 
         // GET: Transaction/Details/5

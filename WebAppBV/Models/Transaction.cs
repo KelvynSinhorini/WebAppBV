@@ -25,7 +25,7 @@ namespace WebAppBV.Models
             TransactionId = transactionId;
         }
 
-        public Transaction(Guid transactionId, string description, string local, decimal value, DateTime date, int numberOfParcel, int totalParcel)
+        public Transaction(Guid transactionId, string description, string local, decimal value, DateTime date, int? numberOfParcel, int? totalParcel, bool onlyThisMonth, Owner? owner)
         {
             TransactionId = transactionId;
             Description = description;
@@ -34,6 +34,8 @@ namespace WebAppBV.Models
             Date = date;
             NumberOfParcel = numberOfParcel;
             TotalParcel = totalParcel;
+            Owner = owner;
+            OnlyThisMonth = onlyThisMonth;
         }
 
         [Required]
