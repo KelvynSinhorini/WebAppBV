@@ -1,30 +1,27 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using WebAppBV.Data;
 using WebAppBV.Helpers;
-using WebAppBV.Models;
+using WebAppBV.Services;
 using WebAppBV.ViewModels;
 
 namespace WebAppBV.Controllers
 {
     public class TransactionController : Controller
     {
-        private readonly BVContext _context;
+        private readonly ITransactionService _transactionService;
 
-        public TransactionController(BVContext context)
+        public TransactionController(ITransactionService transactionService)
         {
-            _context = context;
+            _transactionService = transactionService;
         }
 
         // GET: Transaction
         public async Task<IActionResult> Index()
         {
             // TODO Tirar a ordenação e colocar filtros na tela
-
-            var transactions = await _context.Transactions.ToListAsync();
+            var transactions = await _transactionService.GetAll();
 
             var transactionsViewModel = transactions.Select(t =>
             {
@@ -38,13 +35,12 @@ namespace WebAppBV.Controllers
         // GET: Transaction/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null || _context.Transactions == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var transaction = await _context.Transactions
-                .FirstOrDefaultAsync(m => m.TransactionId == id);
+            var transaction = await _transactionService.Get(id);
             if (transaction == null)
             {
                 return NotFound();
@@ -71,8 +67,7 @@ namespace WebAppBV.Controllers
             {
                 var transaction = Converters.ConvertTransactionViewModelToModel(transactionViewModel);
                 transaction.SetNewTransactionId();
-                _context.Add(transaction);
-                await _context.SaveChangesAsync();
+                await _transactionService.Create(transaction);
                 return RedirectToAction(nameof(Index));
             }
             return View(transactionViewModel);
@@ -81,12 +76,12 @@ namespace WebAppBV.Controllers
         // GET: Transaction/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null || _context.Transactions == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var transaction = await _context.Transactions.FindAsync(id);
+            var transaction = await _transactionService.Get(id);
             if (transaction == null)
             {
                 return NotFound();
@@ -113,12 +108,13 @@ namespace WebAppBV.Controllers
 
                 try
                 {
-                    _context.Update(transaction);
-                    await _context.SaveChangesAsync();
+                    await _transactionService.Edit(transaction);
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
-                    if (!TransactionExists(transaction.TransactionId))
+                    Console.WriteLine(ex.Message);
+                    transaction = await _transactionService.Get(transactionViewModel.TransactionId);
+                    if (transaction == null)
                     {
                         return NotFound();
                     }
@@ -136,13 +132,12 @@ namespace WebAppBV.Controllers
         // GET: Transaction/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null || _context.Transactions == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var transaction = await _context.Transactions
-                .FirstOrDefaultAsync(m => m.TransactionId == id);
+            var transaction = await _transactionService.Get(id);
             if (transaction == null)
             {
                 return NotFound();
@@ -157,23 +152,13 @@ namespace WebAppBV.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            if (_context.Transactions == null)
-            {
-                return Problem("Entity set 'BVContext.Transactions'  is null.");
-            }
-            var transaction = await _context.Transactions.FindAsync(id);
+            var transaction = await _transactionService.Get(id);
             if (transaction != null)
             {
-                _context.Transactions.Remove(transaction);
+                await _transactionService.Delete(transaction);
             }
             
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool TransactionExists(Guid id)
-        {
-          return _context.Transactions.Any(e => e.TransactionId == id);
         }
     }
 }

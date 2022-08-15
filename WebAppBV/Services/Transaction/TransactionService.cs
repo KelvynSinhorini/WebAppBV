@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebAppBV.Data;
@@ -16,6 +18,18 @@ namespace WebAppBV.Services
             _context = context;
         }
 
+        public async Task<List<Transaction>> GetAll() // TODO Arrumar a perfomance, GetAll é recomendado nao fazer.
+        {
+            var transactions = await _context.Transactions.ToListAsync();
+            return transactions;
+        }
+
+        public async Task<Transaction> Get(Guid? transactionId)
+        {
+            var transaction = await _context.Transactions.FirstOrDefaultAsync(m => m.TransactionId == transactionId);
+            return transaction;
+        }
+
         public async Task Create(Transaction transaction)
         {
             await _context.Transactions.AddAsync(transaction);
@@ -27,6 +41,19 @@ namespace WebAppBV.Services
             await _context.Transactions.AddRangeAsync(transactions);
             await _context.SaveChangesAsync();
         }
+
+        public async Task Edit(Transaction transaction)
+        {
+            _context.Update(transaction);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task Delete(Transaction transaction)
+        {
+            _context.Transactions.Remove(transaction);
+            await _context.SaveChangesAsync();
+        }
+
 
         // TODO: Refatorar
         public async Task<List<Transaction>> CheckExistenceAndReturnList(List<Transaction> transactions)
