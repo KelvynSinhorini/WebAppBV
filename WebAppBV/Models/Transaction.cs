@@ -4,16 +4,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebAppBV.Models
 {
+    [Flags]
     public enum Owner
     {
-        Kelvyn,
-        Mano,
-        Jocelaine,
-        Ketlyn,
-        Elias,
-        Joslei,
-        Compartilhado,
-        Desconto
+        Kelvyn = 1,
+        Mano = 2,
+        Jocelaine = 4,
+        Ketlyn = 8,
+        Elias = 16,
+        Joslei = 32,
+        Compartilhado = 64,
+        Desconto = 128
     }
 
     public class Transaction

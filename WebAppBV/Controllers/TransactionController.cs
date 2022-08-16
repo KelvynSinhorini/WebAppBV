@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using WebAppBV.Helpers;
+using WebAppBV.Models;
 using WebAppBV.Services;
 using WebAppBV.ViewModels;
 
@@ -25,11 +26,11 @@ namespace WebAppBV.Controllers
 
             var transactionsViewModel = transactions.Select(t =>
             {
-                var transactionViewModel = Converters.ConvertTransactionToViewModel(t);
-                return transactionViewModel;
+                var transactionIndexViewModel = Converters.ConvertTransactionToIndexViewModel(t);
+                return transactionIndexViewModel;
             });
 
-            return View(transactionsViewModel.OrderBy(t => t.Owner).ThenBy(t => t.Value));
+            return View(transactionsViewModel.OrderBy(t => t.Value));
         }
 
         // GET: Transaction/Details/5
@@ -53,6 +54,7 @@ namespace WebAppBV.Controllers
         // GET: Transaction/Create
         public IActionResult Create()
         {
+            ViewBag.Owners = Enum.GetValues<Owner>().Select(o => o.ToString()).ToList();
             return View();
         }
 
@@ -86,6 +88,9 @@ namespace WebAppBV.Controllers
             {
                 return NotFound();
             }
+
+            ViewBag.Owners = Enum.GetValues<Owner>().Select(o => o.ToString()).ToList();
+
             var transactionViewModel = Converters.ConvertTransactionToViewModel(transaction);
             return View(transactionViewModel);
         }
