@@ -54,14 +54,14 @@ namespace WebAppBV.Services
             await _context.SaveChangesAsync();
         }
 
-        public List<Transaction> GetExistingByTransactions(List<Transaction> transactions) // TODO Tornar assincrono
+        public List<Transaction> GetTransactionsToAdd(List<Transaction> transactions) // TODO Tornar assincrono
         {
             if (transactions == null)
-                throw new System.ArgumentNullException();
+                throw new ArgumentNullException();
 
-            var existingTransactions = new List<Transaction>();
+            var transactionsToAdd = new List<Transaction>();
 
-            foreach(var transaction in transactions.Where(t => !t.OnlyThisMonth))
+            foreach(var transaction in transactions)
             {
                 var transactionInDatabase = _context.Transactions.FirstOrDefault(t =>
                             t.Description.Equals(transaction.Description) &&
@@ -69,11 +69,33 @@ namespace WebAppBV.Services
                             t.Local.Equals(transaction.Local) &&
                             t.Date.Date.Equals(transaction.Date.Date));
 
-                if(transactionInDatabase != null)
-                    existingTransactions.Add(transactionInDatabase);
+                if(transactionInDatabase == null)
+                    transactionsToAdd.Add(transaction);
             }
 
-            return existingTransactions;
+            return transactionsToAdd;
+        }
+
+        public IEnumerable<Transaction> GetAndFilterTransactions(List<Transaction> transactions)
+        {
+            if (transactions == null)
+                throw new ArgumentNullException();
+
+            foreach (var transaction in transactions)
+            {
+                var transactionInDatabase = _context.Transactions.FirstOrDefault(t =>
+                            t.Description.Equals(transaction.Description) &&
+                            t.Value.Equals(transaction.Value) &&
+                            t.Local.Equals(transaction.Local) &&
+                            t.Date.Date.Equals(transaction.Date.Date));
+
+                if (transactionInDatabase != null)
+                {
+                    transaction.Owner = transactionInDatabase.Owner;
+                }
+
+                yield return transaction;
+            }
         }
     }
 }

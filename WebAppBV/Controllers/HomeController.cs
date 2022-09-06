@@ -52,15 +52,11 @@ namespace WebAppBV.Controllers
             CleanHtmlText(htmlText);
 
             var transactions = ReadTransactionsInHtmlText(htmlText);
-            var existingTransactions = _transactionService.GetExistingByTransactions(transactions);
-            var existingTransactionIds = existingTransactions.Select(t => t.TransactionId);
 
-            var transactionsToAdd = transactions.ExceptBy(existingTransactionIds, t => t.TransactionId);
-
+            var transactionsToAdd = _transactionService.GetTransactionsToAdd(transactions);
             _transactionService.Create(transactionsToAdd);
 
-            // Verificar as que existem e retorna-las
-            // Adicionar as que nao existem
+            // transactions = _transactionService.GetAndFilterTransactions(transactions).ToList();
 
             // Export to download
             string webRootPath = _webHostEnvironment.WebRootPath;
@@ -128,6 +124,10 @@ namespace WebAppBV.Controllers
                         var valueCell = row.CreateCell(2);
                         valueCell.CellStyle = cellStyle;
                         valueCell.SetCellValue(decimal.ToDouble(transaction.Value));
+
+                        var ownerCell = row.CreateCell(4);
+                        ownerCell.CellStyle = cellStyle;
+                        ownerCell.SetCellValue(transaction.Owner.ToString());
 
                         var lastTransaction = transactionsOrdenedByDate.LastOrDefault();
 
