@@ -32,6 +32,7 @@ namespace WebAppBV
                 ServiceLifetime.Transient);
 
             services.AddTransient<ITransactionService, TransactionService>();
+            services.AddTransient<IExcelService, ExcelService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
